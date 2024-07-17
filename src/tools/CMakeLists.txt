@@ -1,5 +1,5 @@
 add_subdirectory(3rdparty)
-add_subdirectory(buildoutputparser)
+#add_subdirectory(buildoutputparser)
 
 option(BUILD_CPLUSPLUS_TOOLS "Build CPlusPlus tools" OFF)
 

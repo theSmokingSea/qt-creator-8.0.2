@@ -25,9 +25,9 @@
 
 #include "contentwindow.h"
 
-#include <helpviewer.h>
-#include <localhelpmanager.h>
-#include <openpagesmanager.h>
+// #include <helpviewer.h>
+// #include <localhelpmanager.h>
+// #include <openpagesmanager.h>
 
 #include <utils/navigationtreeview.h>
 
@@ -38,33 +38,33 @@
 #include <QHelpEngine>
 #include <QHelpContentModel>
 
-using namespace Help::Internal;
+// using namespace Help::Internal;
 
 ContentWindow::ContentWindow()
     : m_contentWidget(0)
     , m_expandDepth(-2)
     , m_isOpenInNewPageActionVisible(true)
 {
-    m_contentModel = (&LocalHelpManager::helpEngine())->contentModel();
-    m_contentWidget = new Utils::NavigationTreeView;
-    m_contentWidget->setModel(m_contentModel);
-    m_contentWidget->setActivationMode(Utils::SingleClickActivation);
-    m_contentWidget->installEventFilter(this);
-    m_contentWidget->viewport()->installEventFilter(this);
-    m_contentWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    setFocusProxy(m_contentWidget);
-
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(m_contentWidget);
-
-    connect(m_contentWidget, &QWidget::customContextMenuRequested,
-            this, &ContentWindow::showContextMenu);
-    connect(m_contentWidget, &QTreeView::activated,
-            this, &ContentWindow::itemActivated);
-
-    connect(m_contentModel, &QHelpContentModel::contentsCreated,
-            this, &ContentWindow::expandTOC);
+    // m_contentModel = (&LocalHelpManager::helpEngine())->contentModel();
+    // m_contentWidget = new Utils::NavigationTreeView;
+    // m_contentWidget->setModel(m_contentModel);
+    // m_contentWidget->setActivationMode(Utils::SingleClickActivation);
+    // m_contentWidget->installEventFilter(this);
+    // m_contentWidget->viewport()->installEventFilter(this);
+    // m_contentWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    // setFocusProxy(m_contentWidget);
+    //
+    // QVBoxLayout *layout = new QVBoxLayout(this);
+    // layout->setContentsMargins(0, 0, 0, 0);
+    // layout->addWidget(m_contentWidget);
+    //
+    // connect(m_contentWidget, &QWidget::customContextMenuRequested,
+    //         this, &ContentWindow::showContextMenu);
+    // connect(m_contentWidget, &QTreeView::activated,
+    //         this, &ContentWindow::itemActivated);
+    //
+    // connect(m_contentModel, &QHelpContentModel::contentsCreated,
+    //         this, &ContentWindow::expandTOC);
 }
 
 ContentWindow::~ContentWindow()

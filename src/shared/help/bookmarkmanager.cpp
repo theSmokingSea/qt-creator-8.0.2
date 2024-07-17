@@ -25,7 +25,7 @@
 
 #include "bookmarkmanager.h"
 
-#include <localhelpmanager.h>
+// #include <localhelpmanager.h>
 
 #include <coreplugin/icore.h>
 
@@ -53,7 +53,7 @@
 
 #include <QHelpEngine>
 
-using namespace Help::Internal;
+// using namespace Help::Internal;
 
 static const char kBookmarksKey[] = "Help/Bookmarks";
 

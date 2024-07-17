@@ -27,9 +27,9 @@
 
 #include "topicchooser.h"
 
-#include <helpviewer.h>
-#include <localhelpmanager.h>
-#include <openpagesmanager.h>
+// #include <helpviewer.h>
+// #include <localhelpmanager.h>
+// #include <openpagesmanager.h>
 
 #include <utils/fancylineedit.h>
 #include <utils/hostosinfo.h>
@@ -86,18 +86,18 @@ IndexWindow::IndexWindow()
     toolbar->setLayout(tbLayout);
     layout->addWidget(toolbar);
 
-    QHelpIndexModel *indexModel = LocalHelpManager::helpEngine().indexModel();
+    // QHelpIndexModel *indexModel = LocalHelpManager::helpEngine().indexModel();
     m_filteredIndexModel = new IndexFilterModel(this);
-    m_filteredIndexModel->setSourceModel(indexModel);
+    // m_filteredIndexModel->setSourceModel(indexModel);
     m_indexWidget = new Utils::NavigationTreeView(this);
     m_indexWidget->setModel(m_filteredIndexModel);
     m_indexWidget->setRootIsDecorated(false);
     m_indexWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_indexWidget->installEventFilter(this);
-    connect(indexModel, &QHelpIndexModel::indexCreationStarted,
-            this, &IndexWindow::disableSearchLineEdit);
-    connect(indexModel, &QHelpIndexModel::indexCreated,
-            this, &IndexWindow::enableSearchLineEdit);
+    // connect(indexModel, &QHelpIndexModel::indexCreationStarted,
+    //         this, &IndexWindow::disableSearchLineEdit);
+    // connect(indexModel, &QHelpIndexModel::indexCreated,
+    //         this, &IndexWindow::enableSearchLineEdit);
     connect(m_indexWidget, &Utils::NavigationTreeView::activated,
             this, [this](const QModelIndex &index) { open(index); });
     connect(m_searchLineEdit, &QLineEdit::returnPressed,
@@ -202,9 +202,9 @@ void IndexWindow::open(const QModelIndex &index, bool newPage)
     QMultiMap<QString, QUrl> links = LocalHelpManager::helpEngine().linksForKeyword(keyword);
 #else
     QMultiMap<QString, QUrl> links;
-    const QList<QHelpLink> docs = LocalHelpManager::helpEngine().documentsForKeyword(keyword);
-    for (const auto &doc : docs)
-        links.insert(doc.title, doc.url);
+    // const QList<QHelpLink> docs = LocalHelpManager::helpEngine().documentsForKeyword(keyword);
+    // for (const auto &doc : docs)
+    //     links.insert(doc.title, doc.url);
 
 #endif
     emit linksActivated(links, keyword, newPage);
