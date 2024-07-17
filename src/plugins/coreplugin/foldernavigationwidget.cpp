@@ -41,7 +41,7 @@
 
 #include <extensionsystem/pluginmanager.h>
 
-#include <texteditor/textdocument.h>
+// #include <texteditor/textdocument.h>
 
 #include <utils/algorithm.h>
 #include <utils/filecrumblabel.h>

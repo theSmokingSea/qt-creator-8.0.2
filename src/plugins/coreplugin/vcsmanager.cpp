@@ -38,7 +38,7 @@
 #include <utils/infobar.h>
 #include <utils/optional.h>
 #include <utils/qtcassert.h>
-#include <vcsbase/vcsbaseconstants.h>
+// #include <vcsbase/vcsbaseconstants.h>
 
 #include <QDir>
 #include <QString>
