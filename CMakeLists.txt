@@ -54,10 +54,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-if (WITH_TESTS)
-  set(QT_TEST_COMPONENT Test)
-  set(IMPLICIT_DEPENDS Qt5::Test)
-endif()
+#if (WITH_TESTS)
+#  set(QT_TEST_COMPONENT Test)
+#  set(IMPLICIT_DEPENDS Qt5::Test)
+#endif()
 
 # suppress bogus warning
 # warning C4573 requires the compiler to capture 'this' but the current default capture mode does not allow it
@@ -137,65 +137,65 @@ else()
 endif()
 install(TARGETS OptionalSvg EXPORT QtCreator)
 
-if (APPLE)
-  find_library(FWCoreFoundation CoreFoundation)
-  find_library(FWCoreServices CoreServices)
-  find_library(FWFoundation Foundation)
-  find_library(FWAppKit AppKit)
-  find_library(FWIOKit IOKit)
-  find_library(FWSecurity Security)
-  find_library(FWSystemConfiguration SystemConfiguration)
-  find_library(FWWebKit WebKit)
-endif()
+#if (APPLE)
+#  find_library(FWCoreFoundation CoreFoundation)
+#  find_library(FWCoreServices CoreServices)
+#  find_library(FWFoundation Foundation)
+#  find_library(FWAppKit AppKit)
+#  find_library(FWIOKit IOKit)
+#  find_library(FWSecurity Security)
+#  find_library(FWSystemConfiguration SystemConfiguration)
+#  find_library(FWWebKit WebKit)
+#endif()
 
-if (WITH_TESTS)
-  enable_testing()
-endif()
-
-if (UNIX)
-  add_subdirectory(bin)
-endif()
+#if (WITH_TESTS)
+#  enable_testing()
+#endif()
+#
+#if (UNIX)
+#  add_subdirectory(bin)
+#endif()
 
 add_subdirectory(src)
 add_subdirectory(share)
 
-if (WITH_TESTS)
-  add_subdirectory(tests)
-endif()
+#if (WITH_TESTS)
+#  add_subdirectory(tests)
+#endif()
 
-add_subdirectory(doc)
-
-find_package(Python3 COMPONENTS Interpreter)
-if (NOT Python3_Interpreter_FOUND)
-  message("No python interpreter found, skipping \"Dependencies\" install component.")
-else()
-  get_target_property(_qmake_binary Qt5::qmake IMPORTED_LOCATION)
-  set(_llvm_arg)
-  if (LLVM_INSTALL_PREFIX)
-    set(_llvm_arg "--llvm \"${LLVM_INSTALL_PREFIX}\"")
-  endif()
-  set(_elfutils_arg)
-  if (ELFUTILS_INCLUDE_DIR)
-    get_filename_component(_elfutils_path ${ELFUTILS_INCLUDE_DIR} DIRECTORY)
-    set(_elfutils_arg "--elfutils \"${_elfutils_path}\"")
-  endif()
-  install(CODE "
-      execute_process(COMMAND
-        \"${Python3_EXECUTABLE}\"
-        \"${CMAKE_CURRENT_LIST_DIR}/scripts/deployqt.py\"
-        ${_llvm_arg}
-        ${_elfutils_arg}
-        \"\${CMAKE_INSTALL_PREFIX}/${IDE_APP_PATH}/${IDE_APP_TARGET}\"
-        \"${_qmake_binary}\"
-        COMMAND_ECHO STDOUT
-        )
-    "
-    COMPONENT Dependencies
-    EXCLUDE_FROM_ALL
-  )
-endif()
-
-feature_summary(INCLUDE_QUIET_PACKAGES WHAT
-  PACKAGES_FOUND PACKAGES_NOT_FOUND
-  ENABLED_FEATURES DISABLED_FEATURES
-)
+#add_subdirectory(doc)
+#
+#find_package(Python3 COMPONENTS Interpreter)
+#if (NOT Python3_Interpreter_FOUND)
+#  message("No python interpreter found, skipping \"Dependencies\" install component.")
+#else()
+#  get_target_property(_qmake_binary Qt5::qmake IMPORTED_LOCATION)
+#  set(_llvm_arg)
+#  if (LLVM_INSTALL_PREFIX)
+#    set(_llvm_arg "--llvm \"${LLVM_INSTALL_PREFIX}\"")
+#  endif()
+#  set(_elfutils_arg)
+#  if (ELFUTILS_INCLUDE_DIR)
+#    get_filename_component(_elfutils_path ${ELFUTILS_INCLUDE_DIR} DIRECTORY)
+#    set(_elfutils_arg "--elfutils \"${_elfutils_path}\"")
+#  endif()
+#  install(CODE "
+#      execute_process(COMMAND
+#        \"${Python3_EXECUTABLE}\"
+#        \"${CMAKE_CURRENT_LIST_DIR}/scripts/deployqt.py\"
+#        ${_llvm_arg}
+#        ${_elfutils_arg}
+#        \"\${CMAKE_INSTALL_PREFIX}/${IDE_APP_PATH}/${IDE_APP_TARGET}\"
+#        \"${_qmake_binary}\"
+#        COMMAND_ECHO STDOUT
+#        )
+#    "
+#    COMPONENT Dependencies
+#    EXCLUDE_FROM_ALL
+#  )
+#endif()
+#
+#feature_summary(INCLUDE_QUIET_PACKAGES WHAT
+#  PACKAGES_FOUND PACKAGES_NOT_FOUND
+#  ENABLED_FEATURES DISABLED_FEATURES
+#)

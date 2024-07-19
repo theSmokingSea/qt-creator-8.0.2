@@ -23,7 +23,7 @@
 **
 ****************************************************************************/
 
-#include "../tools/qtcreatorcrashhandler/crashhandlersetup.h"
+//#include "../tools/qtcreatorcrashhandler/crashhandlersetup.h"
 
 #include <app/app_version.h>
 #include <extensionsystem/iplugin.h>
@@ -600,8 +600,8 @@ int main(int argc, char **argv)
     QtSystemExceptionHandler systemExceptionHandler(libexecPath);
 #else
     // Display a backtrace once a serious signal is delivered (Linux only).
-    CrashHandlerSetup setupCrashHandler(Core::Constants::IDE_DISPLAY_NAME,
-                                        CrashHandlerSetup::EnableRestart, libexecPath);
+//    CrashHandlerSetup setupCrashHandler(Core::Constants::IDE_DISPLAY_NAME,
+//                                        CrashHandlerSetup::EnableRestart, libexecPath);
 #endif
 
 #ifdef ENABLE_CRASHPAD

@@ -210,9 +210,9 @@ endif()
 
 set(FONTS_BASE "${QtCreator_SOURCE_DIR}/src/share/3rdparty/studiofonts/")
 if(${Qt5_VERSION} VERSION_LESS "6")
-extend_qtc_plugin(Core
-  SOURCES "${FONTS_BASE}/studiofonts.qrc"
-)
+#extend_qtc_plugin(Core
+#  SOURCES "${FONTS_BASE}/studiofonts.qrc"
+#)
 else() # < Qt 6
 qt_add_resources(Core
   CoreWelcomeScreenFonts_rcc

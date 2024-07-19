@@ -15,9 +15,9 @@ add_qtc_executable(qtcreator
   DEPENDS Aggregation ExtensionSystem Qt5::Core Qt5::Widgets Utils shared_qtsingleapplication app_version
   SOURCES
     main.cpp
-    ../tools/qtcreatorcrashhandler/crashhandlersetup.cpp ../tools/qtcreatorcrashhandler/crashhandlersetup.h
+    #../tools/qtcreatorcrashhandler/crashhandlersetup.cpp ../tools/qtcreatorcrashhandler/crashhandlersetup.h
   PROPERTIES
-    WIN32_EXECUTABLE ON
+#    WIN32_EXECUTABLE ON
     MACOSX_BUNDLE ON
     OUTPUT_NAME "${IDE_APP_TARGET}"
   DESTINATION "${IDE_APP_PATH}"
