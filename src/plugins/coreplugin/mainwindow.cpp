@@ -1,28 +1,3 @@
-/****************************************************************************
-**
-** Copyright (C) 2016 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of Qt Creator.
-**
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3 as published by the Free Software
-** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
-** included in the packaging of this file. Please review the following
-** information to ensure the GNU General Public License requirements will
-** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-**
-****************************************************************************/
-
 #include "mainwindow.h"
 
 #include "icore.h"
@@ -131,17 +106,10 @@ MainWindow::MainWindow()
     HistoryCompleter::setSettings(PluginManager::settings());
 
     setWindowTitle(Constants::IDE_DISPLAY_NAME);
-    if (HostOsInfo::isLinuxHost())
-        QApplication::setWindowIcon(Icons::QTCREATORLOGO_BIG.icon());
-    QString baseName = QApplication::style()->objectName();
-    // Sometimes we get the standard windows 95 style as a fallback
-    if (HostOsInfo::isAnyUnixHost() && !HostOsInfo::isMacHost()
-            && baseName == QLatin1String("windows")) {
-        baseName = QLatin1String("fusion");
-    }
 
-    // if the user has specified as base style in the theme settings,
-    // prefer that
+    QString baseName = QApplication::style()->objectName();
+
+    // if the user has specified as base style in the theme settings, prefer that
     const QStringList available = QStyleFactory::keys();
     const QStringList styles = Utils::creatorTheme()->preferredStyles();
     for (const QString &s : styles) {
@@ -190,17 +158,12 @@ MainWindow::MainWindow()
     int childsCount = statusBar()->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly).count();
     statusBar()->insertPermanentWidget(childsCount - 1, m_toggleRightSideBarButton); // before QSizeGrip
 
-//    setUnifiedTitleAndToolBarOnMac(true);
-    //if (HostOsInfo::isAnyUnixHost())
-        //signal(SIGINT, handleSigInt);
-
     statusBar()->setProperty("p_styled", true);
 
     auto dropSupport = new DropSupport(this, [](QDropEvent *event, DropSupport *) {
         return event->source() == nullptr; // only accept drops from the "outside" (e.g. file manager)
     });
-    connect(dropSupport, &DropSupport::filesDropped,
-            this, &MainWindow::openDroppedFiles);
+    connect(dropSupport, &DropSupport::filesDropped, this, &MainWindow::openDroppedFiles);
 }
 
 NavigationWidget *MainWindow::navigationWidget(Side side) const
@@ -438,8 +401,8 @@ void MainWindow::registerDefaultContainers()
 {
     ActionContainer *menubar = ActionManager::createMenuBar(Constants::MENU_BAR);
 
-    if (!HostOsInfo::isMacHost()) // System menu bar on Mac
-        setMenuBar(menubar->menuBar());
+    setMenuBar(menubar->menuBar());
+
     menubar->appendGroup(Constants::G_FILE);
     menubar->appendGroup(Constants::G_EDIT);
     menubar->appendGroup(Constants::G_VIEW);
@@ -1203,12 +1166,6 @@ void MainWindow::saveWindowSettings()
     QSettings *settings = PluginManager::settings();
     settings->beginGroup(QLatin1String(settingsGroup));
 
-    // On OS X applications usually do not restore their full screen state.
-    // To be able to restore the correct non-full screen geometry, we have to put
-    // the window out of full screen before saving the geometry.
-    // Works around QTBUG-45241
-    if (Utils::HostOsInfo::isMacHost() && isFullScreen())
-        setWindowState(windowState() & ~Qt::WindowFullScreen);
     settings->setValue(QLatin1String(windowGeometryKey), saveGeometry());
     settings->setValue(QLatin1String(windowStateKey), saveState());
     settings->setValue(modeSelectorLayoutKey, int(ModeManager::modeStyle()));
@@ -1336,29 +1293,6 @@ void MainWindow::aboutPlugins()
 
 void MainWindow::contact()
 {
-    QMessageBox dlg(QMessageBox::Information, tr("Contact"),
-           tr("<p>Qt Creator developers can be reached at the Qt Creator mailing list:</p>"
-              "%1"
-              "<p>or the #qt-creator channel on Libera.Chat IRC:</p>"
-              "%2"
-              "<p>Our bug tracker is located at %3.</p>"
-              "<p>Please use %4 for bigger chunks of text.</p>")
-                    .arg("<p>&nbsp;&nbsp;&nbsp;&nbsp;"
-                            "<a href=\"https://lists.qt-project.org/listinfo/qt-creator\">"
-                            "mailto:qt-creator@qt-project.org"
-                         "</a></p>")
-                    .arg("<p>&nbsp;&nbsp;&nbsp;&nbsp;"
-                            "<a href=\"https://web.libera.chat/#qt-creator\">"
-                            "https://web.libera.chat/#qt-creator"
-                         "</a></p>")
-                    .arg("<a href=\"https://bugreports.qt.io/projects/QTCREATORBUG\">"
-                            "https://bugreports.qt.io"
-                         "</a>")
-                    .arg("<a href=\"https://pastebin.com\">"
-                            "https://pastebin.com"
-                         "</a>"),
-           QMessageBox::Ok, this);
-    dlg.exec();
 }
 
 QPrinter *MainWindow::printer() const

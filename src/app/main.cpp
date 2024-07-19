@@ -1,40 +1,11 @@
-/****************************************************************************
-**
-** Copyright (C) 2016 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of Qt Creator.
-**
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3 as published by the Free Software
-** Foundation with exceptions as appearing in the file LICENSE.GPL3-EXCEPT
-** included in the packaging of this file. Please review the following
-** information to ensure the GNU General Public License requirements will
-** be met: https://www.gnu.org/licenses/gpl-3.0.html.
-**
-****************************************************************************/
-
-//#include "../tools/qtcreatorcrashhandler/crashhandlersetup.h"
-
 #include <app/app_version.h>
 #include <extensionsystem/iplugin.h>
-#include <extensionsystem/pluginerroroverview.h>
 #include <extensionsystem/pluginmanager.h>
 #include <extensionsystem/pluginspec.h>
 #include <qtsingleapplication.h>
 
 #include <utils/algorithm.h>
 #include <utils/environment.h>
-#include <utils/fileutils.h>
 #include <utils/hostosinfo.h>
 #include <utils/optional.h>
 #include <utils/qtcsettings.h>
@@ -42,7 +13,6 @@
 #include <utils/temporarydirectory.h>
 #include <utils/terminalcommand.h>
 
-#include <QDebug>
 #include <QDir>
 #include <QFontDatabase>
 #include <QFileInfo>
@@ -64,27 +34,9 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QStandardPaths>
-#include <QTemporaryDir>
 #include <QTextCodec>
 
-#include <string>
 #include <vector>
-#include <iterator>
-
-#ifdef ENABLE_QT_BREAKPAD
-#include <qtsystemexceptionhandler.h>
-#endif
-
-#ifdef ENABLE_CRASHPAD
-#define NOMINMAX
-#include "client/crashpad_client.h"
-#include "client/crash_report_database.h"
-#include "client/settings.h"
-#endif
-
-#ifdef Q_OS_LINUX
-#include <malloc.h>
-#endif
 
 using namespace ExtensionSystem;
 
@@ -285,10 +237,6 @@ static Utils::QtcSettings *createUserSettings()
 
 static void setHighDpiEnvironmentVariable()
 {
-
-    if (Utils::HostOsInfo::isMacHost())
-        return;
-
     std::unique_ptr<QSettings> settings(createUserSettings());
 
     const bool defaultValue = Utils::HostOsInfo::isWindowsHost();
@@ -300,15 +248,7 @@ static void setHighDpiEnvironmentVariable()
             && !qEnvironmentVariableIsSet("QT_AUTO_SCREEN_SCALE_FACTOR")
             && !qEnvironmentVariableIsSet("QT_SCALE_FACTOR")
             && !qEnvironmentVariableIsSet("QT_SCREEN_SCALE_FACTORS")) {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-    } else {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        /* AA_DisableHighDpiScaling is deprecated */
-        QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
-            Qt::HighDpiScaleFactorRoundingPolicy::Floor);
-#endif
     }
 }
 
@@ -416,54 +356,6 @@ QStringList lastSessionArgument()
     return hasProjectExplorer ? QStringList({"-lastsession"}) : QStringList();
 }
 
-#ifdef ENABLE_CRASHPAD
-bool startCrashpad(const QString &libexecPath, bool crashReportingEnabled)
-{
-    using namespace crashpad;
-
-    // Cache directory that will store crashpad information and minidumps
-    QString databasePath = QDir::cleanPath(libexecPath + "/crashpad_reports");
-    QString handlerPath = QDir::cleanPath(libexecPath + "/crashpad_handler");
-#ifdef Q_OS_WIN
-    handlerPath += ".exe";
-    base::FilePath database(databasePath.toStdWString());
-    base::FilePath handler(handlerPath.toStdWString());
-#elif defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
-    base::FilePath database(databasePath.toStdString());
-    base::FilePath handler(handlerPath.toStdString());
-#endif
-
-    std::unique_ptr<CrashReportDatabase> db = CrashReportDatabase::Initialize(database);
-    if (db && db->GetSettings())
-        db->GetSettings()->SetUploadsEnabled(crashReportingEnabled);
-
-    // URL used to submit minidumps to
-    std::string url(CRASHPAD_BACKEND_URL);
-
-    // Optional annotations passed via --annotations to the handler
-    std::map<std::string, std::string> annotations;
-    annotations["app-version"] = Core::Constants::IDE_VERSION_DISPLAY;
-    annotations["qt-version"] = QT_VERSION_STR;
-
-    // Optional arguments to pass to the handler
-    std::vector<std::string> arguments;
-    arguments.push_back("--no-rate-limit");
-
-    CrashpadClient *client = new CrashpadClient();
-    bool success = client->StartHandler(
-        handler,
-        database,
-        database,
-        url,
-        annotations,
-        arguments,
-        /* restartable */ true,
-        /* asynchronous_start */ true
-    );
-
-    return success;
-}
-#endif
 
 int main(int argc, char **argv)
 {
@@ -491,14 +383,8 @@ int main(int argc, char **argv)
         }
     }
 
-#if defined(Q_OS_WIN) && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     if (!qEnvironmentVariableIsSet("QT_OPENGL"))
         QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
-#else
-    qputenv("QSG_RHI_BACKEND", "opengl");
-    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
-                Qt::HighDpiScaleFactorRoundingPolicy::Round);
-#endif
 
     if (qEnvironmentVariableIsSet("QTCREATOR_DISABLE_NATIVE_MENUBAR")
             || qgetenv("XDG_CURRENT_DESKTOP").startsWith("Unity")) {
@@ -510,36 +396,8 @@ int main(int argc, char **argv)
         qputenv("QT_ENABLE_REGEXP_JIT", "0");
     }
 
-#if defined(QTC_FORCE_XCB)
-    if (Utils::HostOsInfo::isLinuxHost() && !qEnvironmentVariableIsSet("QT_QPA_PLATFORM")) {
-        // Enforce XCB on Linux/Gnome, if the user didn't override via QT_QPA_PLATFORM
-        // This was previously done in Qt, but removed in Qt 6.3. We found that bad things can still happen,
-        // like the Wayland session simply crashing when starting Qt Creator.
-        // TODO: Reconsider when Qt/Wayland is reliably working on the supported distributions
-        const bool hasWaylandDisplay = qEnvironmentVariableIsSet("WAYLAND_DISPLAY");
-        const bool isWaylandSessionType = qgetenv("XDG_SESSION_TYPE") == "wayland";
-        const QByteArray currentDesktop = qgetenv("XDG_CURRENT_DESKTOP").toLower();
-        const QByteArray sessionDesktop = qgetenv("XDG_SESSION_DESKTOP").toLower();
-        const bool isGnome = currentDesktop.contains("gnome") || sessionDesktop.contains("gnome");
-        const bool isWayland = hasWaylandDisplay || isWaylandSessionType;
-        if (isGnome && isWayland) {
-            qInfo() << "Warning: Ignoring WAYLAND_DISPLAY on Gnome."
-                    << "Use QT_QPA_PLATFORM=wayland to run on Wayland anyway.";
-            qputenv("QT_QPA_PLATFORM", "xcb");
-        }
-    }
-#endif
 
     Utils::TemporaryDirectory::setMasterTemporaryDirectory(QDir::tempPath() + "/" + Core::Constants::IDE_CASED_ID + "-XXXXXX");
-
-#ifdef Q_OS_MACOS
-    // increase the number of file that can be opened in Qt Creator.
-    struct rlimit rl;
-    getrlimit(RLIMIT_NOFILE, &rl);
-
-    rl.rlim_cur = qMin((rlim_t)OPEN_MAX, rl.rlim_max);
-    setrlimit(RLIMIT_NOFILE, &rl);
-#endif
 
     QScopedPointer<Utils::TemporaryDirectory> temporaryCleanSettingsDir;
     if (options.settingsPath.isEmpty() && (options.hasTestOption || options.wantsCleanSettings)) {
@@ -596,23 +454,9 @@ int main(int argc, char **argv)
 
     const QString libexecPath = QCoreApplication::applicationDirPath()
             + '/' + RELATIVE_LIBEXEC_PATH;
-#ifdef ENABLE_QT_BREAKPAD
-    QtSystemExceptionHandler systemExceptionHandler(libexecPath);
-#else
-    // Display a backtrace once a serious signal is delivered (Linux only).
-//    CrashHandlerSetup setupCrashHandler(Core::Constants::IDE_DISPLAY_NAME,
-//                                        CrashHandlerSetup::EnableRestart, libexecPath);
-#endif
 
-#ifdef ENABLE_CRASHPAD
-    bool crashReportingEnabled = settings->value("CrashReportingEnabled", false).toBool();
-    startCrashpad(libexecPath, crashReportingEnabled);
-#endif
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
     app.setAttribute(Qt::AA_DisableWindowContextHelpButton);
-#endif
 
     PluginManager pluginManager;
     PluginManager::setPluginIID(QLatin1String("org.qt-project.Qt.QtCreatorPlugin"));
@@ -773,32 +617,6 @@ int main(int argc, char **argv)
     // shutdown plugin manager on the exit
     QObject::connect(&app, &QCoreApplication::aboutToQuit, &pluginManager, &PluginManager::shutdown);
 
-#ifdef Q_OS_LINUX
-    class MemoryTrimmer : public QObject
-    {
-    public:
-        MemoryTrimmer()
-        {
-            m_trimTimer.setSingleShot(true);
-            m_trimTimer.setInterval(60000);
-            // glibc may not actually free memory in free().
-            connect(&m_trimTimer, &QTimer::timeout, this, [] { malloc_trim(0); });
-        }
-
-        bool eventFilter(QObject *, QEvent *e) override
-        {
-            if ((e->type() == QEvent::MouseButtonPress || e->type() == QEvent::KeyPress)
-                    && !m_trimTimer.isActive()) {
-                m_trimTimer.start();
-            }
-            return false;
-        }
-
-        QTimer m_trimTimer;
-    };
-    MemoryTrimmer trimmer;
-    app.installEventFilter(&trimmer);
-#endif
 
     return restarter.restartOrExit(app.exec());
 }
