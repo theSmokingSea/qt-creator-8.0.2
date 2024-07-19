@@ -825,14 +825,9 @@ void MainWindow::registerDefaultActions()
     mhelp->addAction(cmd, Constants::G_HELP_ABOUT);
     tmpaction->setEnabled(true);
     connect(tmpaction, &QAction::triggered, this, &MainWindow::contact);
-
-    // About sep
-    if (!HostOsInfo::isMacHost()) { // doesn't have the "About" actions in the Help menu
-        tmpaction = new QAction(this);
-        tmpaction->setSeparator(true);
-        cmd = ActionManager::registerAction(tmpaction, "QtCreator.Help.Sep.About");
-        mhelp->addAction(cmd, Constants::G_HELP_ABOUT);
-    }
+//    TODO 无效
+//    ActionManager::command("QtCreator.Contact")->setAttribute(Command::CA_Hide);
+//    mhelp->setOnAllDisabledBehavior(ActionContainer::Hide);
 }
 
 void MainWindow::registerModeSelectorStyleActions()
