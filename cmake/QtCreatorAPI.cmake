@@ -251,7 +251,7 @@ function(add_qtc_library name)
   )
 
   if (NOT _arg_SKIP_PCH)
-    enable_pch(${name})
+#    enable_pch(${name})
   endif()
 
   unset(NAMELINK_OPTION)
@@ -714,7 +714,7 @@ function(add_qtc_executable name)
     ${_arg_PROPERTIES}
   )
   if (NOT _arg_SKIP_PCH)
-    enable_pch(${name})
+#    enable_pch(${name})
   endif()
 
   if (_arg_QTC_RUNNABLE)
@@ -866,7 +866,7 @@ function(add_qtc_test name)
     INSTALL_RPATH "${_RPATH_BASE}/${_RPATH};${CMAKE_INSTALL_RPATH}"
   )
   if (NOT _arg_SKIP_PCH)
-    enable_pch(${name})
+#    enable_pch(${name})
   endif()
 
   if (NOT _arg_GTEST AND NOT _arg_MANUALTEST)

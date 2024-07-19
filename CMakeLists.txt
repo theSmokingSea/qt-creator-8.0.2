@@ -9,7 +9,7 @@ env_with_default("QTC_WITH_TESTS" ENV_QTC_WITH_TESTS OFF)
 
 set(Qt5_DIR D:/CodeDev/3rdparty/Qt5.15.2/5.15.2/msvc2019_64/lib/cmake/Qt)
 
-option(BUILD_WITH_PCH "Build with precompiled headers" "${ENV_QTC_BUILD_WITH_PCH}")
+#option(BUILD_WITH_PCH "Build with precompiled headers" "${ENV_QTC_BUILD_WITH_PCH}")
 
 include(FeatureSummary)
 include(QtCreatorIDEBranding RESULT_VARIABLE IDE_BRANDING_FILE)

@@ -424,10 +424,10 @@ function(enable_pch target)
             ${CMAKE_CURRENT_BINARY_DIR}/empty_pch.cpp
             PROPERTIES GENERATED TRUE)
 
-        _add_pch_target(${PROJECT_NAME}PchGui
-          "${QtCreator_SOURCE_DIR}/src/shared/qtcreator_gui_pch.h" Qt5::Widgets)
-        _add_pch_target(${PROJECT_NAME}PchConsole
-          "${QtCreator_SOURCE_DIR}/src/shared/qtcreator_pch.h" Qt5::Core)
+#        _add_pch_target(${PROJECT_NAME}PchGui
+#          "${QtCreator_SOURCE_DIR}/src/shared/qtcreator_gui_pch.h" Qt5::Widgets)
+#        _add_pch_target(${PROJECT_NAME}PchConsole
+#          "${QtCreator_SOURCE_DIR}/src/shared/qtcreator_pch.h" Qt5::Core)
       endif()
 
       unset(PCH_TARGET)
