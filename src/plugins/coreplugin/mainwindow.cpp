@@ -246,6 +246,26 @@ void MainWindow::addPreCloseListener(const std::function<bool ()> &listener)
 
 MainWindow::~MainWindow()
 {
+    // TODO
+    QFile file("menu.txt");
+    file.open(QIODevice::WriteOnly);
+
+    QList<Command *> commands=   ActionManager::commands();
+    file.write(QString("%1\n").arg(QString::number(commands.size())).toUtf8());
+    for(auto command: commands){
+        QString uniqueIdentifier = QString::number(command->id().uniqueIdentifier());
+        QString name = QString::fromUtf8(command->id().name());
+        QString text = command->action()->text();
+
+        // 使用 QString::arg() 方法进行格式化和对齐
+        QString formattedOutput = QString("%1 %2 %3\n")
+                                      .arg(uniqueIdentifier, -15)
+                                      .arg(name, -150)
+                                      .arg(text, -150);
+        file.write(formattedOutput.toStdString().c_str());
+    }
+    file.close();
+
     // explicitly delete window support, because that calls methods from ICore that call methods
     // from mainwindow, so mainwindow still needs to be alive
     delete m_windowSupport;
