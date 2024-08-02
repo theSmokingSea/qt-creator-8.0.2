@@ -4,3 +4,5 @@ add_qtc_library(Aggregation
     aggregate.cpp aggregate.h
     aggregation_global.h
 )
+
+add_subdirectory(examples/text)

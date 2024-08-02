@@ -3,7 +3,7 @@
 #include "myinterfaces.h"
 #include "ui_main.h"
 
-#include <aggregate.h>
+#include "aggregate.h"
 
 #include <QWidget>
 
@@ -12,8 +12,8 @@ class MyMain : public QWidget
     Q_OBJECT
 
 public:
-    explicit MyMain(QWidget *parent = 0, Qt::WFlags flags = 0);
-    ~MyMain();
+    explicit MyMain(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ~MyMain()  override;
 
     void add(IComboEntry *obj);
 

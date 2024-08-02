@@ -7,6 +7,7 @@ add_qtc_library(Utils
     ../3rdparty/optional/optional.hpp
     ../3rdparty/variant/variant.hpp
     ../3rdparty/span/span.hpp
+
     QtConcurrentTools
     algorithm.h
     ansiescapecodehandler.cpp ansiescapecodehandler.h
@@ -189,13 +190,7 @@ add_qtc_library(Utils
     wizardpage.cpp wizardpage.h
 )
 
-option(QTC_USE_NEW_MIMEDATABASE "Use updated MIME database implementation" YES)
-
-if(QTC_USE_NEW_MIMEDATABASE)
-  set(mime_prefix "mimetypes2")
-else()
-  set(mime_prefix "mimetypes")
-endif()
+set(mime_prefix "mimetypes2")
 
 extend_qtc_library(Utils
   SOURCES_PREFIX ${mime_prefix}
@@ -231,35 +226,7 @@ extend_qtc_library(Utils CONDITION WIN32
     _CRT_SECURE_NO_WARNINGS _SCL_SECURE_NO_WARNINGS
 )
 
-extend_qtc_library(Utils CONDITION APPLE
-  SOURCES
-    fileutils_mac.mm fileutils_mac.h
-    processhandle_mac.mm
-    theme/theme_mac.mm theme/theme_mac.h
-    touchbar/touchbar_appdelegate_mac.mm touchbar/touchbar_appdelegate_mac_p.h
-    touchbar/touchbar_mac.mm touchbar/touchbar_mac_p.h
-  DEPENDS
-    ${FWFoundation} ${FWAppKit}
-)
-
 extend_qtc_library(Utils CONDITION UNIX AND NOT APPLE
   SOURCES
     touchbar/touchbar.cpp
 )
-
-if (WIN32)
-  add_qtc_executable(qtcreator_process_stub
-    SOURCES process_stub_win.c
-    DEPENDS shell32
-    DEFINES _UNICODE UNICODE _CRT_SECURE_NO_WARNINGS
-  )
-
-  add_qtc_executable(qtcreator_ctrlc_stub
-    DEPENDS user32 shell32
-    DEFINES _UNICODE UNICODE _CRT_SECURE_NO_WARNINGS
-    SOURCES
-      process_ctrlc_stub.cpp
-  )
-else()
-  add_qtc_executable(qtcreator_process_stub SOURCES process_stub_unix.c)
-endif()
