@@ -357,8 +357,12 @@ QStringList lastSessionArgument()
 }
 
 
+
 int main(int argc, char **argv)
 {
+    QSettings* m_setting = new QSettings("TianFu", "AIFEM");
+    m_setting->clear();
+    m_setting->sync();
     Restarter restarter(argc, argv);
     Utils::Environment::systemEnvironment(); // cache system environment before we do any changes
 
