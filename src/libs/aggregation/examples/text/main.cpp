@@ -6,8 +6,7 @@ MyMain::MyMain(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
 {
     ui.setupUi(this);
-    connect(ui.comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &MyMain::select);
+    connect(ui.comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MyMain::select);
 }
 
 void MyMain::add(IComboEntry *obj)
@@ -19,13 +18,11 @@ void MyMain::add(IComboEntry *obj)
 void MyMain::select(int index)
 {
     IComboEntry *entry = m_entries.at(index);
-    // with multiple inheritance we would use qobject_cast here
-    // instead we use query, to get the components if they exist
+    // 如果使用多重继承，我们会在这里使用qobject_cast，但我们使用query来获取组件（如果它们存在的话）
     IText1 *t1 = Aggregation::query<IText1>(entry);
     IText2 *t2 = Aggregation::query<IText2>(entry);
     IText3 *t3 = Aggregation::query<IText3>(entry);
-    // set the label texts and enable/disable, depending on whether
-    // the respective interface implementations exist
+    // 根据各自的接口实现是否存在，设置标签文本并启用/禁用
     ui.text1->setText(t1 ? t1->text() : tr("N/A"));
     ui.text2->setText(t2 ? t2->text() : tr("N/A"));
     ui.text3->setText(t3 ? t3->text() : tr("N/A"));
@@ -36,8 +33,7 @@ void MyMain::select(int index)
 
 MyMain::~MyMain()
 {
-    // the following deletes all the Aggregate and IComboEntry and ITextX
-    // objects, as well as any other components we might have added
+    // 以下操作将删除所有的Aggregate、IComboEntry和ITextX对象，以及我们可能添加的任何其他组件
     qDeleteAll(m_entries);
 }
 
@@ -45,19 +41,17 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     MyMain w;
-    // create and set up some objects
+    //创建并设置一些对象
 
-    // the first does only implement the required IComboEntry
-    // we don't need an aggregation for this
+    //第一个对象只实现了必需的IComboEntry，我们不需要为此创建聚合体
     IComboEntry *obj1 = new IComboEntry("Entry without text");
 
-    // the second additionally provides an IText2 implementation
-    // adding a component to the aggregation is done by setting the aggregation as the parent of the component
+    //  第二个对象额外提供了IText2实现，通过将聚合体设置为组件的父对象来将组件添加到聚合体中
     Aggregation::Aggregate *obj2 = new Aggregation::Aggregate;
     obj2->add(new IComboEntry("Entry with text 2"));
     obj2->add(new IText2("This is a text for label 2"));
 
-    // and so on... two more objects...
+    // 依此类推...再创建两个对象...
     Aggregation::Aggregate *obj3 = new Aggregation::Aggregate;
     obj3->add(new IComboEntry("Entry with text 1 and 2"));
     obj3->add(new IText1("I love Qt!"));
@@ -67,12 +61,12 @@ int main(int argc, char *argv[])
     obj4->add(new IText1("Some text written here."));
     obj4->add(new IText3("I'm a troll."));
 
-    // the API takes IComboEntries, so we convert the them to it
-    // the MyMain object takes the ownership of the whole aggregations
+    // API接受IComboEntry类型，所以我们将它们转换为该类型MyMain对象接管整个聚合体的所有权
     w.add(Aggregation::query<IComboEntry>(obj1));
     w.add(Aggregation::query<IComboEntry>(obj2));
     w.add(Aggregation::query<IComboEntry>(obj3));
     w.add(Aggregation::query<IComboEntry>(obj4));
     w.show();
+
     return app.exec();
 }
