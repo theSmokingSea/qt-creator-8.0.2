@@ -148,6 +148,7 @@ private:
 
     std::unordered_map<QWidget *, IContext *> m_contextWidgets;
 
+    //
     GeneralSettings *m_generalSettings = nullptr;
     SystemSettings *m_systemSettings = nullptr;
     ShortcutSettings *m_shortcutSettings = nullptr;

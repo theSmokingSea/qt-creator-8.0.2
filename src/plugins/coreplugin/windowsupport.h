@@ -13,6 +13,8 @@ QT_END_NAMESPACE
 namespace Core {
 namespace Internal {
 
+
+// NOTE 窗口管理器
 class WindowList
 {
 public:
