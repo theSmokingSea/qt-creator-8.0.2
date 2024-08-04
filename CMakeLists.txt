@@ -33,6 +33,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 qtc_handle_compiler_cache_support()
 
+if(MSVC)
+  add_compile_options("/utf-8")
+  add_definitions(-DUNICODE -D_UNICODE)
+  add_compile_options(/MP)
+endif ()
+
 option(BUILD_LINK_WITH_QT "Link with Qt from the parent Qt Creator" OFF)
 qtc_link_with_qt()
 

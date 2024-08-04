@@ -52,6 +52,7 @@ struct EXTENSIONSYSTEM_EXPORT PluginArgumentDescription
     QString description;
 };
 
+// 包含插件依赖项的名称和所需的兼容版本号。
 class EXTENSIONSYSTEM_EXPORT PluginSpec
 {
 public:

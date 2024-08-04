@@ -1,5 +1,7 @@
 #include "settingsdialog.h"
 
+#include <iostream>
+
 #include <coreplugin/icore.h>
 #include <coreplugin/dialogs/ioptionspage.h>
 #include <coreplugin/iwizardfactory.h>
@@ -137,6 +139,17 @@ QVariant CategoryModel::data(const QModelIndex &index, int role) const
 void CategoryModel::setPages(const QList<IOptionsPage*> &pages,
                              const QList<IOptionsPageProvider *> &providers)
 {
+
+    std::cout << "category model pages: " << std::endl;
+    for(auto p:pages    ) {
+        std::cout << p->displayName().toStdString() << std::endl;
+    }
+    std::cout << "category model page provider: " << std::endl;
+    for(auto p:providers    ) {
+        std::cout << p->displayCategory().toStdString() << std::endl;
+    }
+    std::cout << "category end" << std::endl;
+
     beginResetModel();
 
     // Clear any previous categories
@@ -428,6 +441,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     createGui();
     setWindowTitle(QCoreApplication::translate("Core::Internal::SettingsDialog", "Preferences"));
 
+    // NOTE m_pages存放着list item 对应的tab items
     m_model.setPages(m_pages, IOptionsPageProvider::allOptionsPagesProviders());
 
     m_proxyModel.setSourceModel(&m_model);
@@ -467,7 +481,10 @@ void SettingsDialog::showPage(const Id pageId)
     int initialCategoryIndex = -1;
     int initialPageIndex = -1;
 
+    // model 存放着左侧的listview item
     const QList<Category *> &categories = m_model.categories();
+    for(auto category:categories) {std::cout << "Preference: " <<  category->displayName.toStdString() <<std::endl;
+    }
     if (initialPageId.isValid()) {
         // First try categories without lazy items.
         for (int i = 0; i < categories.size(); ++i) {
@@ -732,16 +749,13 @@ bool SettingsDialog::execDialog()
                                                QSize(kInitialWidth, kInitialHeight));
         // make sure that the current "single" instance is deleted
         // we can't delete right away, since we still access the m_applied member
+        // 确保当前的"单一"实例被删除. 我们不能立即删除，因为我们仍然在访问 m_applied 成员
         deleteLater();
     } else {
-        // exec dialog is called while the instance is already running
-        // this can happen when a event triggers a code path that wants to
-        // show the settings dialog again
-        // e.g. when starting the debugger (with non-built debugging helpers),
-        // and manually opening the settings dialog, after the debugger hit
-        // a break point it will complain about missing helper, and offer the
-        // option to open the settings dialog.
-        // Keep the UI running by creating another event loop.
+        // 在实例已经运行的情况下调用了 exec 对话框
+        // 这种情况可能发生在某个事件触发了一个代码路径，该路径想要再次显示设置对话框
+        // 例如，当启动调试器（使用非内置的调试助手）时并手动打开设置对话框后，调试器遇到断点时会抱怨缺少助手，并提供打开设置对话框的选项。
+        // 通过创建另一个事件循环来保持 UI 运行。
         QEventLoop eventLoop;
         m_eventLoops.emplace(m_eventLoops.begin(), &eventLoop);
         eventLoop.exec();
@@ -752,7 +766,7 @@ bool SettingsDialog::execDialog()
 
 bool executeSettingsDialog(QWidget *parent, Id initialPage)
 {
-    // Make sure all wizards are there when the user might access the keyboard shortcuts:
+    // Make sure all wizards are there when the user might access the keyboard shortcuts: 确保在用户可能访问键盘快捷键时所有向导都已就绪。
     (void) IWizardFactory::allWizardFactories();
 
     if (!m_instance)

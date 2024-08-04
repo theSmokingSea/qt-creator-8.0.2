@@ -22,12 +22,10 @@
     \inheaderfile extensionsystem/pluginview.h
     \inmodule QtCreator
 
-    \brief The PluginView class implements a widget that shows a list of all
-    plugins and their state.
+    \brief PluginView类实现了一个显示所有插件及其状态的列表小部件。
 
-    This class can be embedded for example in a dialog in the application that
-    uses the plugin manager.
-    The class also provides notifications for interaction with the list.
+    该类可以嵌入到使用插件管理器的应用程序的对话框中。
+    该类还提供了与列表交互的通知。
 
     \sa ExtensionSystem::PluginDetailsView
     \sa ExtensionSystem::PluginErrorView
@@ -35,19 +33,18 @@
 
 /*!
     \fn void ExtensionSystem::PluginView::currentPluginChanged(ExtensionSystem::PluginSpec *spec)
-    The current selection in the plugin list has changed to the
-    plugin corresponding to \a spec.
+    插件列表中的当前选择已更改为对应于 \a spec 的插件。
 */
 
 /*!
     \fn void ExtensionSystem::PluginView::pluginActivated(ExtensionSystem::PluginSpec *spec)
-    The plugin list entry corresponding to \a spec has been activated,
-    for example by a double-click.
+    对应于 \a spec 的插件列表条目已被激活，
+    例如通过双击。
 */
 
 /*!
     \fn void ExtensionSystem::PluginView::pluginSettingsChanged(ExtensionSystem::PluginSpec *spec)
-    The settings for the plugin list entry corresponding to \a spec changed.
+    对应于 \a spec 的插件列表条目的设置已更改。
 */
 
 Q_DECLARE_METATYPE(ExtensionSystem::PluginSpec*)

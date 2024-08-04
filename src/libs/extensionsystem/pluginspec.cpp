@@ -24,51 +24,46 @@
 using namespace ExtensionSystem::Internal;
 
 namespace ExtensionSystem {
-
 /*!
     \class ExtensionSystem::PluginDependency
     \inheaderfile extensionsystem/pluginspec.h
     \inmodule QtCreator
 
-    \brief The PluginDependency class contains the name and required compatible
-    version number of a plugin's dependency.
+    \brief PluginDependency 类包含插件依赖项的名称和所需的兼容版本号。
 
-    This reflects the data of a dependency object in the plugin's meta data.
-    The name and version are used to resolve the dependency. That is,
-    a plugin with the given name and
-    plugin \c {compatibility version <= dependency version <= plugin version} is searched for.
+    这反映了插件元数据中依赖对象的数据。名称和版本用于解析依赖关系。
+    也就是说，会搜索具有给定名称且
+    插件 \c {兼容版本 <= 依赖版本 <= 插件版本} 的插件。
 
-    See also ExtensionSystem::IPlugin for more information about plugin dependencies and
-    version matching.
+    有关插件依赖和版本匹配的更多信息，请参阅 ExtensionSystem::IPlugin。
 */
 
 /*!
     \variable ExtensionSystem::PluginDependency::name
-    String identifier of the plugin.
+    插件的字符串标识符。
 */
 
 /*!
     \variable ExtensionSystem::PluginDependency::version
-    Version string that a plugin must match to fill this dependency.
+    插件必须匹配的版本字符串，以满足此依赖关系。
 */
 
 /*!
     \variable ExtensionSystem::PluginDependency::type
-    Defines whether the dependency is required or optional.
+    定义依赖是必需的还是可选的。
     \sa ExtensionSystem::PluginDependency::Type
 */
 
 /*!
     \enum ExtensionSystem::PluginDependency::Type
-    Whether the dependency is required or optional.
+    定义依赖是必需的还是可选的。
     \value Required
-           Dependency needs to be there.
+           依赖必须存在。
     \value Optional
-           Dependency is not necessarily needed. You need to make sure that
-           the plugin is able to load without this dependency installed, so
-           for example you may not link to the dependency's library.
+           依赖不一定需要。你需要确保插件能够在没有安装此依赖的情况下加载，
+           例如，你可能不会链接到依赖的库。
     \value Test
-           Dependency needs to be force-loaded for running tests of the plugin.
+           需要强制加载依赖以运行插件的测试。
 */
 
 /*!
@@ -76,44 +71,34 @@ namespace ExtensionSystem {
     \inheaderfile extensionsystem/pluginspec.h
     \inmodule QtCreator
 
-    \brief The PluginSpec class contains the information of the plugin's embedded meta data
-    and information about the plugin's current state.
+    \brief PluginSpec 类包含插件嵌入式元数据的信息和有关插件当前状态的信息。
 
-    The plugin spec is also filled with more information as the plugin
-    goes through its loading process (see PluginSpec::State).
-    If an error occurs, the plugin spec is the place to look for the
-    error details.
+    随着插件经历其加载过程（参见 PluginSpec::State），插件规范还会填充更多信息。
+    如果发生错误，插件规范是查找错误详细信息的地方。
 */
 
 /*!
     \enum ExtensionSystem::PluginSpec::State
-    The State enum indicates the states the plugin goes through while
-    it is being loaded.
+    State 枚举指示插件在加载过程中经历的状态。
 
-    The state gives a hint on what went wrong in case of an error.
+    在发生错误的情况下，状态给出了出错原因的提示。
 
     \value  Invalid
-            Starting point: Even the plugin meta data was not read.
+            起点：甚至插件元数据都未读取。
     \value  Read
-            The plugin meta data has been successfully read, and its
-            information is available via the PluginSpec.
+            插件元数据已成功读取，其信息可通过 PluginSpec 获得。
     \value  Resolved
-            The dependencies given in the description file have been
-            successfully found, and are available via the dependencySpecs() function.
+            描述文件中给出的依赖项已成功找到，可通过 dependencySpecs() 函数获得。
     \value  Loaded
-            The plugin's library is loaded and the plugin instance created
-            (available through plugin()).
+            插件的库已加载，并且插件实例已创建（可通过 plugin() 获得）。
     \value  Initialized
-            The plugin instance's IPlugin::initialize() function has been called
-            and returned a success value.
+            插件实例的 IPlugin::initialize() 函数已被调用并返回成功值。
     \value  Running
-            The plugin's dependencies are successfully initialized and
-            extensionsInitialized has been called. The loading process is
-            complete.
+            插件的依赖项已成功初始化，并且已调用 extensionsInitialized。加载过程完成。
     \value Stopped
-            The plugin has been shut down, i.e. the plugin's IPlugin::aboutToShutdown() function has been called.
+            插件已关闭，即已调用插件的 IPlugin::aboutToShutdown() 函数。
     \value Deleted
-            The plugin instance has been deleted.
+            插件实例已被删除。
 */
 
 /*!
@@ -121,8 +106,7 @@ namespace ExtensionSystem {
     \inheaderfile extensionsystem/pluginspec.h
     \inmodule QtCreator
 
-    \brief The PluginArgumentDescriptions class holds a list of descriptions of
-    command line arguments that a plugin processes.
+    \brief PluginArgumentDescriptions 类持有插件处理的命令行参数描述列表。
 
     \sa PluginSpec::argumentDescriptions()
 */

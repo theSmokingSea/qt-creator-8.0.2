@@ -18,6 +18,7 @@ class PluginSpec;
 
 namespace Internal { class PluginManagerPrivate; }
 
+// PluginManager 类实现了核心插件系统，管理插件、它们的生命周期以及它们注册的对象。
 class EXTENSIONSYSTEM_EXPORT PluginManager : public QObject
 {
     Q_OBJECT

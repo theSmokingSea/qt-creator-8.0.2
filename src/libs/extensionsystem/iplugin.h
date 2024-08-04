@@ -13,7 +13,7 @@ namespace Internal {
 
 class PluginManager;
 class PluginSpec;
-
+//  IPlugin 类是一个抽象基类，每个插件必须实现一次。
 class EXTENSIONSYSTEM_EXPORT IPlugin : public QObject
 {
     Q_OBJECT

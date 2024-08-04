@@ -51,16 +51,6 @@ public:
 public slots:
     void fileOpenRequest(const QString&);
 
-#if defined(WITH_TESTS)
-private slots:
-    void testVcsManager_data();
-    void testVcsManager();
-    // Locator:
-    void test_basefilefilter();
-    void test_basefilefilter_data();
-
-    void testOutputFormatter();
-#endif
 
 private:
     static void addToPathChooserContextMenu(Utils::PathChooser *pathChooser, QMenu *menu);

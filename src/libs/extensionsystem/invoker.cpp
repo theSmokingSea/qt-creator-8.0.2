@@ -11,34 +11,32 @@ namespace ExtensionSystem {
     \class ExtensionSystem::Invoker
     \internal
 */
-
 /*!
     \fn template <class Result> Result ExtensionSystem::invoke(QObject *target, const char *slot)
-    Invokes \a slot on \a target by name via Qt's meta method system.
+    通过 Qt 的元方法系统，按名称调用target 上的slot。
 
-    Returns the result of the meta call.
+    返回元调用的结果。
 */
 
 /*!
     \fn template <class Result, class T0> Result ExtensionSystem::invoke(QObject *target, const char *slot, const T0 &t0)
-    Invokes \a slot on \a target with argument \a t0 by name via Qt's meta method system.
+    通过 Qt 的元方法系统，按名称调用target 上的slot，并传入参数t0。
 
-    Returns the result of the meta call.
+    返回元调用的结果。
 */
 
 /*!
     \fn template <class Result, class T0, class T1> Result ExtensionSystem::invoke(QObject *target, const char *slot, const T0 &t0, const T1 &t1)
-    Invokes \a slot on \a target with arguments \a t0 and \a t1 by name via Qt's meta method system.
+    通过 Qt 的元方法系统，按名称调用target 上的slot，并传入参数t0 和t1。
 
-    Returns the result of the meta call.
+    返回元调用的结果。
 */
 
 /*!
     \fn template <class Result, class T0, class T1, class T2> Result ExtensionSystem::invoke(QObject *target, const char *slot, const T0 &t0, const T1 &t1, const T2 &t2)
-    Invokes \a slot on \a target with arguments \a t0, \a t1 and \a t2 by name
-    via Qt's meta method system.
+    通过 Qt 的元方法系统，按名称调用target 上的slot，并传入参数t0、\a t1 和t2。
 
-    Returns the result of the meta call.
+    返回元调用的结果。
 */
 
 InvokerBase::InvokerBase()

@@ -20,6 +20,7 @@ class CollectionItem;
 class PluginItem;
 } // Internal
 
+// TODO 插件展示的窗口  help-->installed plugins
 class EXTENSIONSYSTEM_EXPORT PluginView : public QWidget
 {
     Q_OBJECT

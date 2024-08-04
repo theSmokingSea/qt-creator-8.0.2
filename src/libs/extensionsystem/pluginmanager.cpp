@@ -49,15 +49,12 @@ const char C_FORCEENABLED_PLUGINS[] = "Plugins/ForceEnabled";
 const int DELAYED_INITIALIZE_INTERVAL = 20; // ms
 
 enum { debugLeaks = 0 };
-
 /*!
     \namespace ExtensionSystem
     \inmodule QtCreator
-    \brief The ExtensionSystem namespace provides classes that belong to the
-           core plugin system.
+    \brief ExtensionSystem 命名空间提供了属于核心插件系统的类。
 
-    The basic extension system contains the plugin manager and its supporting classes,
-    and the IPlugin interface that must be implemented by plugin providers.
+    基本扩展系统包含插件管理器及其支持类，以及插件提供者必须实现的 IPlugin 接口。
 */
 
 /*!
@@ -71,69 +68,55 @@ enum { debugLeaks = 0 };
     \inmodule QtCreator
     \ingroup mainclasses
 
-    \brief The PluginManager class implements the core plugin system that
-    manages the plugins, their life cycle, and their registered objects.
+    \brief PluginManager 类实现了核心插件系统，管理插件、它们的生命周期以及它们注册的对象。
 
-    The plugin manager is used for the following tasks:
+    插件管理器用于以下任务：
     \list
-    \li Manage plugins and their state
-    \li Manipulate a \e {common object pool}
+    \li 管理插件及其状态
+    \li 操作 \e {公共对象池}
     \endlist
 
-    \section1 Plugins
-    Plugins must derive from the IPlugin class and have the IID
-    \c "org.qt-project.Qt.QtCreatorPlugin".
+    \section1 插件
+    插件必须派生自 IPlugin 类，并具有 IID \c "org.qt-project.Qt.QtCreatorPlugin"。
 
-    The plugin manager is used to set a list of file system directories to search for
-    plugins, retrieve information about the state of these plugins, and to load them.
+    插件管理器用于设置要搜索插件的文件系统目录列表，检索这些插件状态的信息，以及加载它们。
 
-    Usually, the application creates a PluginManager instance and initiates the
-    loading.
+    通常，应用程序创建一个 PluginManager 实例并启动加载过程。
     \code
-        // 'plugins' and subdirs will be searched for plugins
+        // 将在 'plugins' 及其子目录中搜索插件
         PluginManager::setPluginPaths(QStringList("plugins"));
-        PluginManager::loadPlugins(); // try to load all the plugins
+        PluginManager::loadPlugins(); // 尝试加载所有插件
     \endcode
-    Additionally, it is possible to directly access plugin meta data, instances,
-    and state.
+    此外，还可以直接访问插件元数据、实例和状态。
 
-    \section1 Object Pool
-    Plugins (and everybody else) can add objects to a common \e pool that is located in
-    the plugin manager. Objects in the pool must derive from QObject, there are no other
-    prerequisites. Objects can be retrieved from the object pool via the getObject()
-    and getObjectByName() functions.
+    \section1 对象池
+    插件（以及其他任何人）可以将对象添加到位于插件管理器中的公共 \e 池中。池中的对象必须派生自 QObject，
+    没有其他先决条件。可以通过 getObject() 和 getObjectByName() 函数从对象池中检索对象。
 
-    Whenever the state of the object pool changes, a corresponding signal is
-    emitted by the plugin manager.
+    每当对象池的状态发生变化时，插件管理器就会发出相应的信号。
 
-    A common usecase for the object pool is that a plugin (or the application) provides
-    an \e {extension point} for other plugins, which is a class or interface that can
-    be implemented and added to the object pool. The plugin that provides the
-    extension point looks for implementations of the class or interface in the object pool.
+    对象池的一个常见用例是插件（或应用程序）为其他插件提供 \e {扩展点}，这是一个可以实现并添加到
+    对象池中的类或接口。提供扩展点的插件在对象池中查找该类或接口的实现。
     \code
-        // Plugin A provides a "MimeTypeHandler" extension point
-        // in plugin B:
+        // 插件 A 提供 "MimeTypeHandler" 扩展点
+        // 在插件 B 中：
         MyMimeTypeHandler *handler = new MyMimeTypeHandler();
         PluginManager::instance()->addObject(handler);
-        // In plugin A:
+        // 在插件 A 中：
         MimeTypeHandler *mimeHandler =
             PluginManager::getObject<MimeTypeHandler>();
     \endcode
 
 
-    The ExtensionSystem::Invoker class template provides \e {syntactic sugar}
-    for using \e soft extension points that may or may not be provided by an
-    object in the pool. This approach neither requires the \e user plugin being
-    linked against the \e provider plugin nor a common shared
-    header file. The exposed interface is implicitly given by the
-    invokable functions of the provider object in the object pool.
+    ExtensionSystem::Invoker 类模板为使用 \e 软扩展点提供了 \e {语法糖}，这些扩展点可能由池中的
+    对象提供，也可能不提供。这种方法既不要求 \e 使用插件链接到 \e 提供插件，也不需要共同的共享
+    头文件。暴露的接口隐式地由对象池中提供者对象的可调用函数给出。
 
-    The ExtensionSystem::invoke() function template encapsulates
-    ExtensionSystem::Invoker construction for the common case where
-    the success of the call is not checked.
+    ExtensionSystem::invoke() 函数模板封装了 ExtensionSystem::Invoker 的构造，用于不检查
+    调用成功与否的常见情况。
 
     \code
-        // In the "provide" plugin A:
+        // 在"提供"插件 A 中：
         namespace PluginA {
         class SomeProvider : public QObject
         {
@@ -142,14 +125,14 @@ enum { debugLeaks = 0 };
         public:
             Q_INVOKABLE QString doit(const QString &msg, int n) {
             {
-                qDebug() << "I AM DOING IT " << msg;
+                qDebug() << "我正在执行它 " << msg;
                 return QString::number(n);
             }
         };
         } // namespace PluginA
 
 
-        // In the "user" plugin B:
+        // 在"使用"插件 B 中：
         int someFuntionUsingPluginA()
         {
             using namespace ExtensionSystem;
@@ -157,47 +140,44 @@ enum { debugLeaks = 0 };
             QObject *target = PluginManager::getObjectByClassName("PluginA::SomeProvider");
 
             if (target) {
-                // Some random argument.
-                QString msg = "REALLY.";
+                // 一些随机参数
+                QString msg = "真的。";
 
-                // Plain function call, no return value.
+                // 普通函数调用，无返回值
                 invoke<void>(target, "doit", msg, 2);
 
-                // Plain function with no return value.
-                qDebug() << "Result: " << invoke<QString>(target, "doit", msg, 21);
+                // 带返回值的普通函数
+                qDebug() << "结果：" << invoke<QString>(target, "doit", msg, 21);
 
-                // Record success of function call with return value.
+                // 记录带返回值的函数调用是否成功
                 Invoker<QString> in1(target, "doit", msg, 21);
-                qDebug() << "Success: (expected)" << in1.wasSuccessful();
+                qDebug() << "成功：(预期)" << in1.wasSuccessful();
 
-                // Try to invoke a non-existing function.
+                // 尝试调用不存在的函数
                 Invoker<QString> in2(target, "doitWrong", msg, 22);
-                qDebug() << "Success (not expected):" << in2.wasSuccessful();
+                qDebug() << "成功（不期望）：" << in2.wasSuccessful();
 
             } else {
 
-                // We have to cope with plugin A's absence.
+                // 我们必须应对插件 A 不存在的情况
             }
         };
     \endcode
 
-    \note The type of the parameters passed to the \c{invoke()} calls
-    is deduced from the parameters themselves and must match the type of
-    the arguments of the called functions \e{exactly}. No conversion or even
-    integer promotions are applicable, so to invoke a function with a \c{long}
-    parameter explicitly, use \c{long(43)} or such.
+    \注意 传递给 \c{invoke()} 调用的参数类型是从参数本身推导出来的，必须 \e{精确} 匹配被调用
+    函数的参数类型。不适用任何转换甚至整数提升，因此要显式调用带 \c{long} 参数的函数，
+    请使用 \c{long(43)} 或类似方式。
 
-    \note The object pool manipulating functions are thread-safe.
+    \注意 操作对象池的函数是线程安全的。
 */
 
 /*!
     \fn template <typename T> *ExtensionSystem::PluginManager::getObject()
 
-    Retrieves the object of a given type from the object pool.
+    从对象池中检索给定类型的对象。
 
-    This function uses \c qobject_cast to determine the type of an object.
-    If there are more than one objects of the given type in
-    the object pool, this function will arbitrarily choose one of them.
+    此函数使用 \c qobject_cast 来确定对象的类型。如果对象池中有多个给定类型的对象，
+    此函数将任意选择其中一个。
 
     \sa addObject()
 */
@@ -205,17 +185,13 @@ enum { debugLeaks = 0 };
 /*!
     \fn template <typename T, typename Predicate> *ExtensionSystem::PluginManager::getObject(Predicate predicate)
 
-    Retrieves the object of a given type from the object pool that matches
-    the \a predicate.
+    从对象池中检索匹配 \a predicate 的给定类型的对象。
 
-    This function uses \c qobject_cast to determine the type of an object.
-    The predicate must be a function taking T * and returning a bool.
-    If there is more than one object matching the type and predicate,
-    this function will arbitrarily choose one of them.
+    此函数使用 \c qobject_cast 来确定对象的类型。谓词必须是一个接受 T * 并返回 bool 的函数。
+    如果有多个对象匹配类型和谓词，此函数将任意选择其中一个。
 
     \sa addObject()
 */
-
 
 using namespace Utils;
 

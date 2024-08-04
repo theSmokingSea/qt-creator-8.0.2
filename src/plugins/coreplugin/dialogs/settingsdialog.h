@@ -6,6 +6,8 @@ QT_BEGIN_NAMESPACE
 class QWidget;
 QT_END_NAMESPACE
 
+
+// NOTE preferences 界面
 namespace Core {
 namespace Internal {
 

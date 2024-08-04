@@ -10,6 +10,7 @@ def remove_dll(path):
 
 def run_deployqt(path: str):
     win_deploy_qt = "C:/Software/DevCode/Qt/Qt5.15.2/5.15.2/msvc2019_64/bin/windeployqt.exe"
+    win_deploy_qt = "D:/CodeDev/3rdparty/Qt5.15.2/5.15.2/msvc2019_64/bin/windeployqt.exe"
 
     arguments = [path]
 
@@ -24,8 +25,8 @@ def run_deployqt(path: str):
 
 
 if __name__ == "__main__":
-    build_path = "D:/Code/qt-creator-8.0.2/cmake-build-"
-    build_type = ["release"]  # , "debug"
+    build_path = "D:/CodeDev/src/qt-creator-8.0.2/cmake-build-"
+    build_type = ["debug"]  # , "debug"
 
     for build in build_type:
         path = build_path + build

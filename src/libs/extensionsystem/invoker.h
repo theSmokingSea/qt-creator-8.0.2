@@ -7,6 +7,14 @@
 #include <QMetaType>
 #include <QVarLengthArray>
 
+
+// 使用的时候这个可以不考虑
+// vcsbase projectexplorer模块用到了
+// ExtensionSystem::Invoker<void>(debuggerPlugin(), "attachExternalApplication", rc);
+// const auto symbols = ExtensionSystem::invoke<QSet<QString>>(cppModelManager,
+//                                                                    "symbolsInFiles",
+//                                                                    files);
+
 namespace ExtensionSystem {
 
 class EXTENSIONSYSTEM_EXPORT InvokerBase

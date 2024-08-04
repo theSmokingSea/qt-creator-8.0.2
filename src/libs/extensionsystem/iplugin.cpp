@@ -9,47 +9,34 @@
     \inmodule QtCreator
     \ingroup mainclasses
 
-    \brief The IPlugin class is an abstract base class that must be implemented
-    once for each plugin.
+    \brief IPlugin 类是一个抽象基类，每个插件必须实现一次。
 
-    A plugin needs to provide meta data in addition to the actual plugin
-    library, so the plugin manager can find the plugin, resolve its
-    dependencies, and load it. For more information, see \l{Plugin Meta Data}.
+    除了实际的插件库之外，插件还需要提供元数据，以便插件管理器能够找到插件、解析其依赖关系并加载它。更多信息，请参见 \l{Plugin Meta Data}。
 
-    Plugins must provide one implementation of the IPlugin class, located
-    in a library that matches the \c name attribute given in their
-    meta data. The IPlugin implementation must be exported and
-    made known to Qt's plugin system, using the \c Q_PLUGIN_METADATA macro with
-    an IID set to \c "org.qt-project.Qt.QtCreatorPlugin".
+    插件必须提供一个 IPlugin 类的实现，位于与其元数据中给出的name 属性匹配的库中。IPlugin 实现必须被导出并使用Q_PLUGIN_METADATA 宏
+    使 Qt 的插件系统知晓，IID 设置为"org.qt-project.Qt.QtCreatorPlugin"。
 
-    For more information, see \l{Plugin Life Cycle}.
+    更多信息，请参见 \l{Plugin Life Cycle}。
 */
 
 /*!
     \enum IPlugin::ShutdownFlag
 
-    This enum type holds whether the plugin is shut down synchronously or
-    asynchronously.
+    此枚举类型表示插件是同步关闭还是异步关闭。
 
     \value SynchronousShutdown
-           The plugin is shut down synchronously.
+           插件同步关闭。
     \value AsynchronousShutdown
-           The plugin needs to perform asynchronous
-           actions before it shuts down.
+           插件在关闭之前需要执行异步操作。
 */
 
 /*!
     \fn bool ExtensionSystem::IPlugin::initialize(const QStringList &arguments, QString *errorString)
-    Called after the plugin has been loaded and the IPlugin instance
-    has been created.
+    在插件加载完成并创建 IPlugin 实例后调用。
 
-    The initialize functions of plugins that depend on this plugin are called
-    after the initialize function of this plugin has been called with
-    \a arguments. Plugins should initialize their internal state in this
-    function.
+    依赖于此插件的其他插件的 initialize 函数将在此插件的 initialize 函数使用arguments 调用后才被调用。插件应在此函数中初始化其内部状态。
 
-    Returns whether initialization succeeds. If it does not, \a errorString
-    should be set to a user-readable message describing the reason.
+    返回初始化是否成功。如果不成功，应将errorString 设置为描述原因的用户可读消息。
 
     \sa extensionsInitialized()
     \sa delayedInitialize()
@@ -57,14 +44,9 @@
 
 /*!
     \fn void ExtensionSystem::IPlugin::extensionsInitialized()
-    Called after the initialize() function has been called,
-    and after both the initialize() and \c extensionsInitialized()
-    functions of plugins that depend on this plugin have been called.
+    在调用 initialize() 函数之后，以及依赖于此插件的其他插件的 initialize()和extensionsInitialized() 函数被调用之后调用。
 
-    In this function, the plugin can assume that plugins that depend on
-    this plugin are fully \e {up and running}. It is a good place to
-    look in the global object pool for objects that have been provided
-    by weakly dependent plugins.
+    在此函数中，插件可以假设依赖于此插件的插件已完全 \e {启动并运行}。这是在全局对象池中查找弱依赖插件提供的对象的好地方。
 
     \sa initialize()
     \sa delayedInitialize()
@@ -72,22 +54,14 @@
 
 /*!
     \fn bool ExtensionSystem::IPlugin::delayedInitialize()
-    Called after all plugins' extensionsInitialized() function has been called,
-    and after the \c delayedInitialize() function of plugins that depend on this
-    plugin have been called.
+    在所有插件的 extensionsInitialized() 函数被调用后，以及依赖于此插件的插件的delayedInitialize() 函数被调用后调用。
 
-    The plugins' \c delayedInitialize() functions are called after the
-    application is already running, with a few milliseconds delay to
-    application startup, and between individual \c delayedInitialize()
-    function calls. To avoid unnecessary delays, a plugin should return
-    \c true from the function if it actually implements it, to indicate
-    that the next plugins' \c delayedInitialize() call should be delayed
-    a few milliseconds to give input and paint events a chance to be processed.
+    插件的delayedInitialize() 函数在应用程序已经运行后被调用，与应用程序启动相比有几毫秒的延迟，各个delayedInitialize()
+    函数调用之间也有延迟。为避免不必要的延迟，如果插件实际实现了此函数，应该从函数返回true，以指示下一个插件的delayedInitialize()
+    调用应该延迟几毫秒，以便处理输入和绘制事件。
 
-    This function can be used if a plugin needs to do non-trivial setup that doesn't
-    necessarily need to be done directly at startup, but still should be done within a
-    short time afterwards. This can decrease the perceived plugin or application startup
-    time a lot, with very little effort.
+    如果插件需要进行非平凡的设置，这些设置不一定需要在启动时直接完成，但仍应在短时间内完成，则可以使用此函数。这可以大大减少感知到的插件
+    或应用程序启动时间，而且只需很少的努力。
 
     \sa initialize()
     \sa extensionsInitialized()
@@ -95,23 +69,17 @@
 
 /*!
     \fn ExtensionSystem::IPlugin::ShutdownFlag ExtensionSystem::IPlugin::aboutToShutdown()
-    Called during a shutdown sequence in the same order as initialization
-    before the plugins get deleted in reverse order.
+    在关闭序列中以与初始化相同的顺序调用，在插件以相反顺序被删除之前。
 
-    This function should be used to disconnect from other plugins,
-    hide all UI, and optimize shutdown in general.
-    If a plugin needs to delay the real shutdown for a while, for example if
-    it needs to wait for external processes to finish for a clean shutdown,
-    the plugin can return IPlugin::AsynchronousShutdown from this function. This
-    will keep the main event loop running after the aboutToShutdown() sequence
-    has finished, until all plugins requesting asynchronous shutdown have sent
-    the asynchronousShutdownFinished() signal.
+    此函数应用于断开与其他插件的连接、隐藏所有 UI，并总体上优化关闭过程。
+    如果插件需要延迟实际关闭一段时间，例如需要等待外部进程完成以实现
+    清洁关闭，插件可以从此函数返回 IPlugin::AsynchronousShutdown。
+    这将使主事件循环在 aboutToShutdown() 序列完成后继续运行，直到所有
+    请求异步关闭的插件都发送了 asynchronousShutdownFinished() 信号。
 
-    The default implementation of this function does nothing and returns
-    IPlugin::SynchronousShutdown.
+    此函数的默认实现不执行任何操作，并返回 IPlugin::SynchronousShutdown。
 
-    Returns IPlugin::AsynchronousShutdown if the plugin needs to perform
-    asynchronous actions before shutdown.
+    如果插件需要在关闭前执行异步操作，则返回 IPlugin::AsynchronousShutdown。
 
     \sa asynchronousShutdownFinished()
 */
@@ -121,29 +89,26 @@
                                            const QString &workingDirectory,
                                            const QStringList &arguments)
 
-    When \QC is executed with the \c -client argument while another \QC instance
-    is running, this function of the plugin is called in the running instance.
+    当另一个 \QC 实例正在运行时使用-client 参数执行 \QC 时，
+    将在运行的实例中调用插件的此函数。
 
-    The \a workingDirectory argument specifies the working directory of the
-    calling process. For example, if you're in a directory, and you execute
-    \c { qtcreator -client file.cpp}, the working directory of the calling
-    process is passed to the running instance and \c {file.cpp} is transformed
-    into an absolute path starting from this directory.
+   workingDirectory 参数指定调用进程的工作目录。例如，如果您在一个
+    目录中，并执行{ qtcreator -client file.cpp}，调用进程的工作目录
+    将传递给正在运行的实例，并且{file.cpp} 将被转换为从该目录开始的
+    绝对路径。
 
-    Plugin-specific arguments are passed in \a options, while the rest of the
-    arguments are passed in \a arguments.
+    插件特定的参数在options 中传递，而其余参数在arguments 中传递。
 
-    Returns a QObject that blocks the command until it is destroyed, if \c -block
-    is used.
+    如果使用-block，则返回一个 QObject，该对象会阻塞命令直到它被销毁。
 */
 
 /*!
     \fn void ExtensionSystem::IPlugin::asynchronousShutdownFinished()
-    Sent by the plugin implementation after an asynchronous shutdown
-    is ready to proceed with the shutdown sequence.
+    在异步关闭准备好继续关闭序列后由插件实现发送。
 
     \sa aboutToShutdown()
 */
+
 
 using namespace ExtensionSystem;
 
@@ -166,11 +131,13 @@ IPlugin::~IPlugin()
 
 /*!
     Returns objects that are meant to be passed on to \l QTest::qExec().
+    返回旨在传递给 QTest::qExec() 的对象。
 
-    This function will be called if the user starts \QC with
-    \c {-test PluginName} or \c {-test all}.
+    This function will be called if the user starts \QC with{-test PluginName} or{-test all}.
+    如果用户使用 {-test PluginName} 或 {-test all} 启动，将调用此函数。
 
     The ownership of returned objects is transferred to caller.
+    返回对象的所有权转移给调用者。
 */
 QVector<QObject *> IPlugin::createTestObjects() const
 {
@@ -178,8 +145,8 @@ QVector<QObject *> IPlugin::createTestObjects() const
 }
 
 /*!
-    Returns the PluginSpec corresponding to this plugin.
-    This is not available in the constructor.
+    返回与此插件对应的 PluginSpec。
+    这在构造函数中不可用。
 */
 PluginSpec *IPlugin::pluginSpec() const
 {

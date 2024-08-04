@@ -21,6 +21,8 @@ class Command;
 
 namespace Internal {
 
+//NOTE 快捷键管理的界面
+
 class ActionManagerPrivate;
 class ShortcutSettingsWidget;
 
